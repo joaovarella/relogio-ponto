@@ -2,8 +2,9 @@ import { useState } from "react";
 import Botao from "../Botao";
 import Campo from "../Campo";
 import "./formulario.css";
+import { addDoc } from "firebase/firestore";
 
-const Formulario = ({ aoCadastrarUsuario }) => {
+const Formulario = ({ aoCadastrarUsuario, userColletionRef }) => {
   const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
 
@@ -14,7 +15,16 @@ const Formulario = ({ aoCadastrarUsuario }) => {
       nome,
       senha,
     });
+    CriarUser();
   };
+
+  async function CriarUser() {
+    const user = await addDoc(userColletionRef, {
+      nome,
+      senha,
+    });
+    console.log(user);
+  }
 
   return (
     <section className="formulario-container">
