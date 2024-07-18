@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 // import MenuLateral from "./Components/MenuLateral";
 // import Principal from "./Components/Principal";
-import Login from "./View/LoginUsuario";
+import Login from "./View/Login";
 import CadastroPonto from "./View/CadastroPonto";
 // import Home from "./View/home";
 import CadastroFuncionario from "./View/CadastroFuncionario";
@@ -20,8 +20,6 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Navigate to="/CadastroUsuario" />} />
         <Route path="/CadastroUsuario" element={<CadastroUsuario />} />
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/login" element={<Login />} /> */}
         <Route path="/CadastrarFuncionario" element={<CadastroFuncionario />} />
         <Route path="/CadastrarPonto" element={<CadastroPonto />} />
         <Route
