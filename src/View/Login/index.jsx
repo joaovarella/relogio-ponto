@@ -1,44 +1,111 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
 import arrowImg from "../../assets/arrow.svg";
-import logoImg from "../../assets/logo.svg";
+import logoImg from "../../assets/Logo.png";
 import { auth } from "../../Firebase/firebase";
+import { getAuth, OAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import "./styles.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
+  const tenantId = '88f25485-ede9-45ce-9940-edb9b136e8d3';  // O ID do tenant que você está usando
+
+  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+
+  useEffect(() => {
+    handleMicrosoftRedirectResult();
+  }, []);
 
   function handleSignIn(e) {
     e.preventDefault();
-    signInWithEmailAndPassword(email, password);
+    setErrorMessage("");
+    setSuccessMessage("");
+    signInWithEmailAndPassword(email, password)
+      .then(() => {
+        setSuccessMessage("Login bem-sucedido!");
+      })
+      .catch((error) => {
+        setErrorMessage("Erro ao fazer login: " + error.message);
+      });
+  }
+
+  function handleMicrosoftSignInPopup() {
+    const provider = new OAuthProvider('microsoft.com');
+    provider.addScope('mail.read');
+    provider.addScope('calendars.read');
+    provider.setCustomParameters({ prompt: 'consent', tenant: tenantId });  // Inclua o tenantId aqui
+
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = OAuthProvider.credentialFromResult(result);
+        const accessToken = credential.accessToken;
+        const idToken = credential.idToken;
+        setSuccessMessage("Login com Microsoft bem-sucedido!");
+        console.log('Access Token:', accessToken);
+        console.log('ID Token:', idToken);
+        console.log('Usuário autenticado:', result.user);
+      })
+      .catch((error) => {
+        setErrorMessage("Erro ao fazer login com Microsoft: " + error.message);
+        console.error('Error during sign-in with popup:', error);
+      });
+  }
+
+  function handleMicrosoftSignInRedirect() {
+    const provider = new OAuthProvider('microsoft.com');
+    provider.addScope('mail.read');
+    provider.addScope('calendars.read');
+    provider.setCustomParameters({ prompt: 'consent', tenant: tenantId });  // Inclua o tenantId aqui
+
+    signInWithRedirect(auth, provider);
+  }
+
+  function handleMicrosoftRedirectResult() {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          const credential = OAuthProvider.credentialFromResult(result);
+          const accessToken = credential.accessToken;
+          const idToken = credential.idToken;
+          setSuccessMessage("Login com Microsoft bem-sucedido!");
+          console.log('Access Token:', accessToken);
+          console.log('ID Token:', idToken);
+          console.log('Usuário autenticado:', result.user);
+        }
+      })
+      .catch((error) => {
+        setErrorMessage("Erro ao fazer login com Microsoft: " + error.message);
+        console.error('Error during sign-in with redirect:', error);
+      });
   }
 
   if (loading) {
-    return <p>carregando...</p>;
+    return <p>Carregando...</p>;
   }
   if (user) {
-    return console.log(user);
+    return <p>Bem-vindo, {user.email}</p>;
   }
+
   return (
     <div className="container">
       <header className="header">
         <img src={logoImg} alt="Workflow" className="logoImg" />
-        <span>Por favor digite suas informações de login</span>
+        <span>Por favor, digite suas informações de login</span>
       </header>
 
-      <form>
+      <form onSubmit={handleSignIn}>
         <div className="inputContainer">
           <label htmlFor="email">E-mail</label>
           <input
             type="text"
             name="email"
             id="email"
-            placeholder="johndoe@gmail.com"
+            placeholder="Digite seu e-mail"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -49,14 +116,26 @@ export default function Login() {
             type="password"
             name="password"
             id="password"
-            placeholder="********************"
+            placeholder="Digite sua senha"
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        <button className="button" onClick={handleSignIn}>
+        <button type="submit" className="button">
           Entrar <img src={arrowImg} alt="->" />
         </button>
+
+        <button type="button" className="button" onClick={handleMicrosoftSignInPopup}>
+          Entrar com Microsoft (Popup)
+        </button>
+
+        <button type="button" className="button" onClick={handleMicrosoftSignInRedirect}>
+          Entrar com Microsoft (Redirect)
+        </button>
+
+        {errorMessage && <p className="error">{errorMessage}</p>}
+        {successMessage && <p className="success">{successMessage}</p>}
+
         <div className="footer">
           <p>Você não tem uma conta?</p>
           <Link to="/CadastroUsuario">Crie a sua conta aqui</Link>

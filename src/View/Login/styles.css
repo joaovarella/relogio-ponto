@@ -106,3 +106,20 @@
   color: #5C73DB;
 }
 
+.button{
+  margin: 20px;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
+}
+
+.success {
+  color: green;
+  font-size: 0.9em;
+}
+
+.header img{
+  height: 10vh;
+}

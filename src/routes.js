@@ -18,7 +18,7 @@ function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Navigate to="/CadastroUsuario" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/CadastroUsuario" element={<CadastroUsuario />} />
         <Route path="/CadastrarFuncionario" element={<CadastroFuncionario />} />
         <Route path="/CadastrarPonto" element={<CadastroPonto />} />
