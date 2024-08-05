@@ -82,8 +82,8 @@ const Validate2faPage = () => {
 
   return (
     <Box
-      style={{
-        display: "grid",
+      sx={{
+        display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         textAlign: "center",
@@ -95,36 +95,52 @@ const Validate2faPage = () => {
     >
       <Typography
         variant="h4"
-        className="text-4xl lg:text-6xl text-center font-[600] text-ct-yellow-600 mb-4"
+        sx={{
+          fontSize: { xs: "2rem", md: "3rem" }, // Responsividade para tamanhos diferentes
+          fontWeight: 600,
+          color: "#F9B800", // Cor ajustada para correspondência
+          mb: 4,
+        }}
       >
         Welcome Back
       </Typography>
 
-      <Typography variant="h6">Verify the Authentication Code</Typography>
+      <Typography variant="h6" sx={{ mb: 4 }}>
+        Verify the Authentication Code
+      </Typography>
+
       <Card
         sx={{
-          width: "384px",
-          height: "354px",
-          padding: "32px",
+          width: { xs: "90%", sm: "384px" }, // Responsividade para diferentes tamanhos de tela
+          height: "auto", // Altura ajustada para conteúdo dinâmico
+          padding: { xs: "16px", sm: "32px" }, // Padding responsivo
           borderRadius: "1rem",
+          mx: "auto", // Centraliza o Card horizontalmente
         }}
       >
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmitHandler)}
-          style={{
+          sx={{
             display: "grid",
-            direction: "column",
             gap: "1rem",
+            gridTemplateColumns: "1fr",
           }}
         >
           <Typography
             variant="h4"
-            className="text-center text-3xl font-semibold text-[#142149]"
+            sx={{
+              fontSize: { xs: "1.5rem", md: "2rem" }, // Ajuste de tamanho do texto
+              fontWeight: "bold",
+              color: "#142149",
+            }}
           >
             Two-Factor Authentication
           </Typography>
-          <Typography variant="caption" className="text-center text-sm">
+          <Typography
+            variant="caption"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+          >
             Open the two-step verification app on your mobile device to get your
             verification code.
           </Typography>
@@ -132,13 +148,12 @@ const Validate2faPage = () => {
             {...register("token")}
             fullWidth
             label="Authentication Code"
+            variant="outlined" // Adiciona uma borda ao TextField
           />
-
-          <Typography className="mt-2 text-xs text-red-600">
+          <Typography sx={{ mt: 2, fontSize: "0.75rem", color: "red" }}>
             {errors.token ? errors.token.message : null}
           </Typography>
-
-          <Button variant="contained" type="submit" className="mt-4">
+          <Button variant="contained" type="submit" sx={{ mt: 4 }}>
             Authenticate
           </Button>
           <MuiLink component={Link} to="/login">
