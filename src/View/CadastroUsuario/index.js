@@ -1,6 +1,9 @@
 import FormularioCadastro from "../../Components/FormularioCadastro";
 import { useEffect, useState } from "react";
 import { firebaseConfig } from "../../Firebase/firebase";
+import { toast } from "react-toastify";
+import { registerUser as registerUserController } from "../../controllers/auth.controller";
+import { useNavigate } from "react-router-dom";
 
 import {
   collection,
@@ -12,48 +15,54 @@ import {
 import "./cadastroUsuario.css";
 
 export default function CadastroUsuario() {
-  const db = getFirestore(firebaseConfig);
-  const userColletionRef = collection(db, "users");
+  const navigate = useNavigate();
 
-  const [usuarios, setUsuarios] = useState([]);
+  // function consultarArray() {
+  //   usuarios.map((usuario) => {
+  //     console.log(usuario);
+  //   });
+  // }
+  const registerUser = async (name, email, senha) => {
+    try {
+      const response = await registerUserController(name, email, senha);
+      if (response.status === "success") {
+        navigate("/login");
+      }
+    } catch (error) {
+      toast.error(error, {
+        position: "top-right",
+      });
+    }
+  };
 
-  function consultarArray() {
-    usuarios.map((usuario) => {
-      console.log(usuario);
-    });
-  }
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     const data = await getDocs(userColletionRef);
+  //     setUsuarios(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   };
+  //   getUsers();
+  // }, []);
 
-  useEffect(() => {
-    const getUsers = async () => {
-      const data = await getDocs(userColletionRef);
-      setUsuarios(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-    getUsers();
-  }, []);
+  // async function deleteUser(id) {
+  //   const userDoc = doc(db, "users", id);
+  //   await deleteDoc(userDoc);
+  //   deletarColaborador(id);
+  // }
 
-  async function deleteUser(id) {
-    const userDoc = doc(db, "users", id);
-    await deleteDoc(userDoc);
-    deletarColaborador(id);
-  }
-
-  function deletarColaborador(id) {
-    setUsuarios(usuarios.filter((usuario) => usuario.id !== id));
-  }
+  // function deletarColaborador(id) {
+  //   setUsuarios(usuarios.filter((usuario) => usuario.id !== id));
+  // }
 
   return (
     <section>
       <div>
-        <FormularioCadastro
-          aoCadastrarUsuario={(usuario) => setUsuarios([...usuarios, usuario])}
-          userColletionRef={userColletionRef}
-        />
+        <FormularioCadastro aoCadastrarUsuario={registerUser} />
       </div>
-      <div>
+      {/* <div>
         <button onClick={consultarArray}>Clique aqui para consultar</button>
-      </div>
+      </div> */}
 
-      {usuarios.map((usuario) => (
+      {/* {usuarios.map((usuario) => (
         <div key={usuario.id}>
           <ul>
             <li>{usuario.id}</li>
@@ -61,7 +70,7 @@ export default function CadastroUsuario() {
           </ul>
           <button onClick={() => deleteUser(usuario.id)}>Apagar</button>
         </div>
-      ))}
+      ))} */}
     </section>
   );
 }

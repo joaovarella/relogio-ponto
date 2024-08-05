@@ -7,50 +7,55 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../Firebase/firebase";
 import { Link } from "react-router-dom";
 
-const Formulario = ({ aoCadastrarUsuario, userColletionRef }) => {
+const Formulario = ({ aoCadastrarUsuario }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [name, setName] = useState("");
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth);
+  // const [createUserWithEmailAndPassword, user, loading, error] =
+  //   useCreateUserWithEmailAndPassword(auth);
 
-  function handleSignOut(evento) {
-    evento.preventDefault();
-    createUserWithEmailAndPassword(email, senha);
-    aoSubmeter(evento);
-  }
+  // function handleSignOut(evento) {
+  //   evento.preventDefault();
+  //   createUserWithEmailAndPassword(email, senha);
+  //   aoSubmeter(evento);
+  // }
 
-  if (loading) {
-    return <p>carregando...</p>;
-  }
+  // if (loading) {
+  //   return <p>carregando...</p>;
+  // }
 
   const aoSubmeter = async (evento) => {
     evento.preventDefault();
-    const idDoUsuario = await CriarUser();
-    aoCadastrarUsuario({
-      id: idDoUsuario,
-      email,
-    });
-    console.log(idDoUsuario);
+    aoCadastrarUsuario(name, email, senha);
   };
 
-  async function CriarUser() {
-    const user = await addDoc(userColletionRef, {
-      email,
-    });
-    return user.id;
-  }
+  // async function CriarUser() {
+  //   const user = await addDoc(userColletionRef, {
+  //     email,
+  //   });
+  //   return user.id;
+  // }
 
   return (
     <section className="formulario-container">
-      <form className="formulario" onSubmit={handleSignOut}>
+      <form className="formulario" onSubmit={aoSubmeter}>
         <h2>Cadastro Usuario</h2>
+        <Campo
+          obrigatorio={true}
+          type="name"
+          label="name"
+          name="name"
+          placeholder="Digite seu nome"
+          valor={name}
+          aoAlterado={(valor) => setName(valor)}
+        />
         <Campo
           obrigatorio={true}
           type="email"
           label="email"
           name="email"
-          placeholder="Digite seu nome "
+          placeholder="Digite seu email"
           valor={email}
           aoAlterado={(valor) => setEmail(valor)}
         />

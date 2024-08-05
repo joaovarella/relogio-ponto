@@ -12,6 +12,9 @@ import DeletarPonto from "./View/DeletarPonto";
 import Historico from "./View/Historico";
 import Relatorios from "./View/Relatorios";
 import CadastroUsuario from "./View/CadastroUsuario";
+import Logout from "./View/Logout";
+import ProfilePage from "./View/Profile";
+import Validate2faPage from "./View/Validate";
 
 function AppRoutes() {
   return (
@@ -31,7 +34,9 @@ function AppRoutes() {
         <Route path="/DeletarPonto" element={<DeletarPonto />} />
         <Route path="/Historico" element={<Historico />} />
         <Route path="/Relatorios" element={<Relatorios />} />
-        <Route path="*" element={<h1>Nada encontrado</h1>} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/login/validateOtp" element={<Validate2faPage />} />
+        <Route path="*" element={<Logout />} />
       </Routes>
     </BrowserRouter>
   );

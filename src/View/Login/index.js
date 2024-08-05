@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import arrowImg from "../../assets/arrow.svg";
 import logoImg from "../../assets/Logo.png";
 import { auth } from "../../Firebase/firebase";
@@ -12,13 +12,14 @@ import {
   getRedirectResult,
 } from "firebase/auth";
 import "./styles.css";
-import { loginUser } from "../../../controllers/auth.controller";
+import { loginUser as loginUserController } from "../../controllers/auth.controller";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
 
   // const tenantId = "88f25485-ede9-45ce-9940-edb9b136e8d3"; // O ID do tenant que você está usando
 
@@ -92,12 +93,28 @@ export default function Login() {
   //     });
   // }
 
-  if (loading) {
-    return <p>Carregando...</p>;
-  }
-  if (user) {
-    return <p>Bem-vindo, {user.email}</p>;
-  }
+  const loginUser = async (e) => {
+    try {
+      e.preventDefault();
+      const userResponse = await loginUserController(email, password);
+
+      console.log("User Response:", userResponse);
+
+      if (userResponse.status === "success") {
+        if (userResponse.user.otp_enabled) {
+          navigate("/login/validateOtp");
+        } else {
+          navigate("/profile");
+        }
+      } else {
+        throw new Error(userResponse.message);
+      }
+    } catch (error) {
+      toast.error(error, {
+        position: "top-right",
+      });
+    }
+  };
 
   return (
     <div className="container">
@@ -132,9 +149,6 @@ export default function Login() {
         <button type="submit" className="button">
           Entrar <img src={arrowImg} alt="->" />
         </button>
-
-        {errorMessage && <p className="error">{errorMessage}</p>}
-        {successMessage && <p className="success">{successMessage}</p>}
 
         <div className="footer">
           <p>Você não tem uma conta?</p>
