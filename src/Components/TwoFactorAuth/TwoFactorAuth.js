@@ -14,7 +14,6 @@ import { Box, Button, Input, ListItem, Modal, Typography } from "@mui/material";
 const TwoFactorAuth = ({ otpauth_url, base32, user_id, closeModal }) => {
   const [qrcodeUrl, setQrcodeUrl] = useState("");
   const [authUser, setAuthUser] = useState(null);
-  const [valido, setValido] = useState("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -33,6 +32,7 @@ const TwoFactorAuth = ({ otpauth_url, base32, user_id, closeModal }) => {
     handleSubmit,
     register,
     setFocus,
+    setError,
     formState: { errors },
   } = useForm();
 
@@ -45,16 +45,15 @@ const TwoFactorAuth = ({ otpauth_url, base32, user_id, closeModal }) => {
           position: "top-right",
         });
       } else if (response.status === "error") {
-        toast.error(response.message, {
-          position: "top-right",
+        setError("token", {
+          type: "manual",
+          message: "Código Invalido",
         });
-        setValido(response.message);
       }
     } catch (error) {
       toast.error("An error occurred while verifying the OTP.", {
         position: "top-right",
       });
-      setValido("An error occurred while verifying the OTP.");
     }
   };
 
